@@ -1,8 +1,9 @@
 const Router = require('express')
 const router = new Router()
+const brandController = require('../controllers/brandController')
 
-router.post('/add')
-router.get('/')
-router.delete('/delete/:id')
+router.post('/add', brandController.add)
+router.get('/', brandController.get)
+router.delete('/delete', brandController.delete)
 
 module.exports = router
