@@ -1,5 +1,5 @@
 const {Basket,BasketDevice, Device} = require('../models/models')
-
+const DeviceService = require("../services/deviceService")
 const ApiError = require('../error/ApiError')
 
 class BasketController {
@@ -7,7 +7,7 @@ class BasketController {
         const {deviceId} = req.body
         const userId = req.user.id
         let userBasket = await Basket.findOne({where: [{userId}]})
-        if (!await Device.findByPk(deviceId))
+        if (!await DeviceService.isDevice(deviceId))
         {
             return next(ApiError.badRequest('Такого товара не существует'))
         }
@@ -34,7 +34,7 @@ class BasketController {
             const basket = await Basket.create({userId})
             userBasket = basket.id
         }
-        if (!await Device.findByPk(deviceId))
+        if (!await DeviceService.isDevice(deviceId))
         {
             return next(ApiError.badRequest('Такого товара не существует'))
         }

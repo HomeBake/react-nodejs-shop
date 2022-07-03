@@ -2,20 +2,20 @@ const uuid = require("uuid")
 const path = require("path")
 const {Device, DeviceInfo, Type, Brand} = require("../models/models")
 const ApiError = require("../error/ApiError")
+const DeviceService = require("../services/deviceService")
 
-async function isType(typeId) {
-    return Type.findByPk(typeId)
-}
 
-async function isBrand(brandId) {
-    return Brand.findByPk(brandId)
-}
 
 class DeviceController {
     async add(req, res, next) {
        try {
            let {name, price, brandId, typeId, info} = req.body
-           if (!await isType(typeId) || await isBrand(brandId)){
+           if (await DeviceService.isDeviceName(name))
+           {
+               return next(ApiError.badRequest("Товар с таким именем существует"))
+           }
+           if (!await DeviceService.isType(typeId) ||
+               !await DeviceService.isBrand(brandId)){
                return next(ApiError.badRequest("Тип или бренд несуществует"))
            }
            const {img} = req.files
@@ -34,7 +34,7 @@ class DeviceController {
            }
            return res.json({device})
        } catch (e) {
-           return next(ApiError.serverError())
+           return next(ApiError.badRequest(e.message))
        }
     }
 
@@ -68,9 +68,17 @@ class DeviceController {
     }
 
     async getOne(req, res, next) {
-        const {id} = req.params
-        const device = await Device.findByPk(id, {include: [{model: DeviceInfo, as: 'device_info'}]})
-        return res.json({device})
+        try {
+            const {id} = req.params
+            if (!await DeviceService.isDevice(id))
+            {
+                return next(ApiError.badRequest("Такого товара нет"))
+            }
+            const device = await Device.findByPk(id, {include: [{model: DeviceInfo, as: 'device_info'}]})
+            return res.json({device})
+        } catch (e) {
+            return next(ApiError.serverError())
+        }
     }
 }
 
