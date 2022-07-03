@@ -1,26 +1,65 @@
-const {Basket,BasketDevice} = require('../models/models')
+const {Basket,BasketDevice, Device} = require('../models/models')
 
 const ApiError = require('../error/ApiError')
 
 class BasketController {
-    async add(req, res) {
+    async add(req, res, next) {
         const {deviceId} = req.body
-
+        const userId = req.user.id
+        let userBasket = await Basket.findOne({where: [{userId}]})
+        if (!await Device.findByPk(deviceId))
+        {
+            return next(ApiError.badRequest('Такого товара не существует'))
+        }
+        if (!userBasket) {
+            const basket = await Basket.create({userId})
+            userBasket = basket.id
+        }
+        if (await BasketDevice.findOne({where: [{deviceId, basketId: userBasket.id}]})) {
+            return next(ApiError.badRequest('Товар уже в корзине'))
+        }
+        try {
+            const basketDevice = await BasketDevice.create({deviceId,basketId: userBasket.id})
+            return res.json({basketDevice})
+        } catch (e) {
+            return next(ApiError.serverError())
+        }
     }
 
-    async delete(req, res) {
+    async delete(req, res, next) {
         const {deviceId} = req.query
-        const basketDevice = await BasketDevice.destroy({
-            where: {basketId: deviceId}
-        })
-        return res.json(basketDevice)
+        const userId = req.user.id
+        let userBasket = await Basket.findOne({where: [{userId}]})
+        if (!userBasket) {
+            const basket = await Basket.create({userId})
+            userBasket = basket.id
+        }
+        if (!await Device.findByPk(deviceId))
+        {
+            return next(ApiError.badRequest('Такого товара не существует'))
+        }
+        try {
+            const basketDevice = await BasketDevice.destroy({
+                where: {deviceId, basketId: userBasket.id}
+            })
+            return res.json(basketDevice)
+        } catch (e) {
+            return next(ApiError.serverError())
+        }
+
     }
 
-    async get(req, res) {
-        const userBasket = await Basket.findAll({
-            include: {model: BasketDevice, required: true},
-            where: {userId: id}
-        })
+    async get(req, res, next) {
+        const userId = req.user.id
+        try {
+            const userBasket = await Basket.findAll({
+                include: {model: BasketDevice, required: false},
+                where: {userId}
+            })
+            return res.json({userBasket})
+        } catch (e) {
+            return next(ApiError.serverError())
+        }
     }
 }
 

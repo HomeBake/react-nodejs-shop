@@ -6,6 +6,7 @@ class RatingController {
         try {
             const {deviceId, rating} = req.body
             const newRating = await Rating.upsert({rate: rating, userId: req.user.id, deviceId: deviceId})
+            return res.json({newRating})
         } catch (e) {
             return next(ApiError.serverError())
         }

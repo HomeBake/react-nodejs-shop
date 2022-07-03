@@ -2,7 +2,7 @@ const {Type} = require("../models/models");
 const ApiError = require("../error/ApiError");
 
 class TypeController {
-    async add(req, res) {
+    async add(req, res, next) {
         try {
             const {name} = req.body
             const isExist = await Type.findOne({
@@ -16,11 +16,11 @@ class TypeController {
             return res.json(type)
         }
         catch (e) {
-            return  res.json(ApiError.serverError())
+            return  next(ApiError.serverError())
         }
     }
 
-    async delete(req, res) {
+    async delete(req, res, next) {
         try {
             const {typeId} = req.query
             const deletedType = await Type.destroy({
@@ -29,17 +29,17 @@ class TypeController {
             return res.json(deletedType)
         }
         catch (e) {
-            return  res.json(ApiError.serverError())
+            return  next(ApiError.serverError())
         }
     }
 
-    async get(req, res) {
+    async get(req, res, next) {
         try {
             const types = await Type.findAll()
             return res.json(types)
         }
         catch (e) {
-            return  res.json(ApiError.serverError())
+            return  next(ApiError.serverError())
         }
     }
 }
