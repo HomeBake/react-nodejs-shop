@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Context.Provider value={{
       userStore: new UserStore(),
-      devicesStore: new DeviceStore(),
+      deviceStore: new DeviceStore(),
       typeStore: new TypeStore(),
       brandStore: new BrandStore(),
   }}>
