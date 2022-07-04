@@ -4,14 +4,14 @@ import {authRoutes, publicRoutes} from "../routes"
 import {Context} from "../index";
 
 const AppRouter = () => {
-    const {user} = useContext(Context)
+    const {userStore} = useContext(Context)
     return (
         <Routes>
-            {user.isAuth === true && authRoutes.map(({path,element}) =>
-                <Route path={path} element={element}/>
+            {userStore.isAuth === true && authRoutes.map(({path,element}) =>
+                <Route key={path} path={path} element={element}/>
             )}
             {publicRoutes.map(({path,element}) =>
-                <Route path={path} element={element}/>
+                <Route key={path} path={path} element={element}/>
             )}
         </Routes>
     );

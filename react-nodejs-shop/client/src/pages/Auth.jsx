@@ -7,7 +7,7 @@ import {Context} from "../index";
 
 const Auth = () => {
     const isRegister = useLocation().pathname === REGISTER_ROUTE
-    const {user} = useContext(Context);
+    const {userStore} = useContext(Context);
     return (
         <Container
         className={"d-flex justify-content-center align-items-center"}
@@ -52,7 +52,7 @@ const Auth = () => {
                         <Button
                             variant={"outline-success"}
                             className={"mt-2 ms-1 align-self-end"}
-                            onClick={() => user.setIsAuth(true)}
+                            onClick={() => userStore.setIsAuth(true)}
                         >
                             {isRegister ?
                                 "Зарегистрироваться"

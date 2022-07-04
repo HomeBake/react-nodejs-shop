@@ -6,18 +6,18 @@ import {LOGIN_ROUTE, REGISTER_ROUTE, STORE_ROUTE} from "../utils/constant";
 import {observer} from "mobx-react-lite";
 
 const NavBar = observer(() => {
-    const {user} = useContext(Context)
+    const {userStore} = useContext(Context)
     return (
             <Navbar bg="dark" expand="lg" style={{height: "54px"}}>
                 <Container>
                     <NavLink to={STORE_ROUTE} className={"text-white"}>Девайсы</NavLink>
-                    {user.isAuth ?
+                    {userStore.isAuth ?
                         <Nav className="ml-auto">
                             <Button className={"text-white m-1"}>Корзина</Button>
-                            {user.user.role === "ADMIN" &&
+                            {userStore.user.role === "ADMIN" &&
                                 <Button className={"text-white m-1"}>Управление</Button>
                             }
-                            <Button className={"text-white m-1"} onClick={() => user.setIsAuth(false)}>Выйти</Button>
+                            <Button className={"text-white m-1"} onClick={() => userStore.setIsAuth(false)}>Выйти</Button>
                         </Nav>
                         :
                         <Nav className="ml-auto">
