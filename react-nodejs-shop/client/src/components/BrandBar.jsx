@@ -6,10 +6,10 @@ import {Context} from "../index";
 const BrandBar = observer(() => {
     const {brandStore} = useContext(Context)
     return (
-        <Container className={"d-flex flex-wrap"}>
+        <Container className={"d-flex flex-wrap p-0"}>
                 {brandStore.brands.map((brand)=>
                     <Button
-                        className={"m-1"}
+                        className={"me-2"}
                         style={{cursor: "pointer"}}
                         key={brand.id}
                         onClick={() => brandStore.setSelectedBrand(brand.id)}

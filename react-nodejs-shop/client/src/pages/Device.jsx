@@ -1,5 +1,5 @@
 import React from 'react';
-import {Col, Container, Image, Row, Table} from "react-bootstrap";
+import {Button, Col, Container, Image, Row, Table} from "react-bootstrap";
 import star from "../assets/star.svg"
 
 const Device = () => {
@@ -24,6 +24,7 @@ const Device = () => {
                 },
             ],
         }
+
     return (
         <Container className={"d-flex mt-5"}>
                 <Image src={device.img}/>
@@ -31,6 +32,7 @@ const Device = () => {
                     <div className={"d-flex flex-row w-100 justify-content-between"}>
                         <h1> {device.name}</h1>
                         <div className={"d-flex align-items-center"}>
+                            <Button className={"me-3"} variant="outline-secondary"> Добавить в корзину</Button>
                             <h1 className={"m-0"}> {device.rate}</h1>
                             <Image  src={star} width={"40px"} height={"40px"}/>
                         </div>
