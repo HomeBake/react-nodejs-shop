@@ -2,11 +2,7 @@ import {makeAutoObservable} from "mobx";
 
 export default class BrandStore {
     constructor() {
-        this._brands = [
-            {id: 1, name: 'Samsung'},
-            {id: 2, name: 'Apple'},
-            {id: 3, name: 'Dell'}
-        ]
+        this._brands = []
         this._selectedBrand = 0
         makeAutoObservable(this)
     }

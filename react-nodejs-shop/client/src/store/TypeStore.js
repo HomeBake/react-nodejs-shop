@@ -2,10 +2,7 @@ import {makeAutoObservable} from "mobx";
 
 export default class TypeStore {
     constructor() {
-        this._types = [
-            {id: 1, name: 'Телефоны'},
-            {id: 2, name: 'Телевизоры'}
-        ]
+        this._types = []
         this._selectedType = 0
         makeAutoObservable(this)
     }
