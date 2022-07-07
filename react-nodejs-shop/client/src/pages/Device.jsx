@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Col, Container, Image, Row, Table} from "react-bootstrap";
 import star from "../assets/star.svg"
+import {fetchDevice} from "../http/deviceAPI";
+import {useParams} from "react-router-dom";
 
 const Device = () => {
-    const device = {
+    const [device,setDevice] = useState({
             id: 1,
             name: 'iPhone 12s+',
             price: 100000,
@@ -11,7 +13,7 @@ const Device = () => {
             brandId: 2,
             rate: 5,
             img: "https://st.depositphotos.com/3228497/4236/v/600/depositphotos_42366715-stock-illustration-smart-phone-android-vector.jpg",
-            info: [
+            device_info: [
                 {
                     id: 1,
                     title: "RAM",
@@ -23,7 +25,13 @@ const Device = () => {
                     description: "LED 12k",
                 },
             ],
-        }
+        })
+
+    const {id} = useParams()
+
+    useEffect((e) => {
+        fetchDevice(id).then(data => setDevice(data))
+    }, [])
 
     return (
         <Container className={"d-flex mt-5"}>
@@ -37,16 +45,20 @@ const Device = () => {
                             <Image  src={star} width={"40px"} height={"40px"}/>
                         </div>
                     </div>
-                    <Table striped bordered hover>
-                        <tbody>
-                        {device.info.map( (info) =>
-                            <tr key={info.id}>
-                                <td>{info.title}</td>
-                                <td>{info.description}</td>
-                            </tr>
-                        )}
-                        </tbody>
-                    </Table>
+                    {device.info ?
+                        <Table striped bordered hover>
+                            <tbody>
+                            {device.info.map( (info) =>
+                                <tr key={info.id}>
+                                    <td>{info.title}</td>
+                                    <td>{info.description}</td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </Table>
+                        :
+                        ''
+                    }
                 </div>
         </Container>
     );
