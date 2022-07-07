@@ -7,6 +7,12 @@ import {observer} from "mobx-react-lite";
 
 const NavBar = observer(() => {
     const {userStore} = useContext(Context)
+    function logOut() {
+        userStore.setIsAuth(false)
+        userStore.resetUser()
+        localStorage.removeItem('token')
+    }
+
     return (
             <Navbar bg="dark" expand="lg" style={{height: "54px"}}>
                 <Container>
@@ -17,7 +23,7 @@ const NavBar = observer(() => {
                             {userStore.user.role === "ADMIN" &&
                                 <Button className={"text-white m-1"}>Управление</Button>
                             }
-                            <Button className={"text-white m-1"} onClick={() => userStore.setIsAuth(false)}>Выйти</Button>
+                            <Button className={"text-white m-1"} onClick={logOut}>Выйти</Button>
                         </Nav>
                         :
                         <Nav className="ml-auto">
