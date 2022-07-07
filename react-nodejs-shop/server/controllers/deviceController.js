@@ -13,11 +13,11 @@ class DeviceController {
            let {name, price, brandId, typeId, info} = req.body
            if (await DeviceService.isDeviceName(name))
            {
-               return next(ApiError.badRequest("Товар с таким именем существует"))
+               return next(ApiError.invalidData("Товар с таким именем существует"))
            }
            if (!await DeviceService.isType(typeId) ||
                !await DeviceService.isBrand(brandId)){
-               return next(ApiError.badRequest("Тип или бренд несуществует"))
+               return next(ApiError.invalidData("Тип или бренд несуществует"))
            }
            const {img} = req.files
            const fileName = uuid.v4() + '.jpg'

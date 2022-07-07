@@ -18,10 +18,10 @@ class UserController {
         try {
             const {email, password} = req.body
             if (!email || !password){
-                return next(ApiError.badRequest('Некоректный ввод почты или пароля'))
+                return next(ApiError.invalidData('Некоректный ввод почты или пароля'))
             }
             if (await User.findOne({where: [{email}]})){
-                return next(ApiError.badRequest('Такая почта занята'))
+                return next(ApiError.invalidData('Такая почта занята'))
             }
             const hashPassword = await bcrypt.hash(password, 4)
             const user = await User.create({email, password:hashPassword})
@@ -37,15 +37,15 @@ class UserController {
         try {
             const {email, password} = req.body
             if (!email || !password){
-                return next(ApiError.badRequest('Некоректный ввод почты или пароля'))
+                return next(ApiError.invalidData('Некоректный ввод почты или пароля'))
             }
             const user = await User.findOne({where: [{email}]})
             if (!user){
-                return next(ApiError.badRequest('Такого пользователя несуществует'))
+                return next(ApiError.invalidData('Такого пользователя несуществует'))
             }
             const isPassCompare = bcrypt.compareSync(password,user.password)
             if (!isPassCompare){
-                return next(ApiError.badRequest('Пароль неверный'))
+                return next(ApiError.invalidData('Пароль неверный'))
             }
             const token = generateJWT(user.id, email, user.role)
             return res.json({token})

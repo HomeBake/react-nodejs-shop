@@ -11,7 +11,7 @@ class BrandController {
             })
             if (isExist)
             {
-                return res.json({message: 'Такой бренд уже существует'})
+                return next(ApiError.invalidData({message: 'Такой бренд уже существует'}))
             }
             const brand = await Brand.create({name})
             return res.json(brand)

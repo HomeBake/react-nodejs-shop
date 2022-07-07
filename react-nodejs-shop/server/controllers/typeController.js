@@ -10,7 +10,7 @@ class TypeController {
             })
             if (isExist)
             {
-                return res.json({message: 'Такой тип уже существует'})
+                return next(ApiError.invalidData({message: 'Такой тип уже существует'}))
             }
             const type = await Type.create({name})
             return res.json(type)

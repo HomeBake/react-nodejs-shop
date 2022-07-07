@@ -9,14 +9,14 @@ class BasketController {
         let userBasket = await Basket.findOne({where: [{userId}]})
         if (!await DeviceService.isDevice(deviceId))
         {
-            return next(ApiError.badRequest('Такого товара не существует'))
+            return next(ApiError.invalidData('Такого товара не существует'))
         }
         if (!userBasket) {
             const basket = await Basket.create({userId})
             userBasket = basket.id
         }
         if (await BasketDevice.findOne({where: [{deviceId, basketId: userBasket.id}]})) {
-            return next(ApiError.badRequest('Товар уже в корзине'))
+            return next(ApiError.invalidData('Товар уже в корзине'))
         }
         try {
             const basketDevice = await BasketDevice.create({deviceId,basketId: userBasket.id})
@@ -36,7 +36,7 @@ class BasketController {
         }
         if (!await DeviceService.isDevice(deviceId))
         {
-            return next(ApiError.badRequest('Такого товара не существует'))
+            return next(ApiError.invalidData('Такого товара не существует'))
         }
         try {
             const basketDevice = await BasketDevice.destroy({

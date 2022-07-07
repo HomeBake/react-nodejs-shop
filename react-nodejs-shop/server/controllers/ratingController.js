@@ -7,7 +7,7 @@ class RatingController {
         try {
             const {deviceId, rate} = req.body
             if (!await DeviceService.isDevice(deviceId)){
-                return next(ApiError.badRequest('Такого товара несуществует'))
+                return next(ApiError.invalidData('Такого товара несуществует'))
             }
             const userId = req.user.id
             if (await Rating.findOne({where: [{userId, deviceId}]})) {
