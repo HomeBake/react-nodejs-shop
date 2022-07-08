@@ -5,7 +5,7 @@ import {NavLink} from "react-router-dom";
 import {LOGIN_ROUTE, REGISTER_ROUTE, STORE_ROUTE} from "../utils/constant";
 import {observer} from "mobx-react-lite";
 
-const NavBar = observer(() => {
+const NavBar = observer(({toggle}) => {
     const {userStore} = useContext(Context)
     function logOut() {
         userStore.setIsAuth(false)
@@ -21,7 +21,7 @@ const NavBar = observer(() => {
                         <Nav className="ml-auto">
                             <Button className={"text-white m-1"}>Корзина</Button>
                             {userStore.user.role === "ADMIN" &&
-                                <Button className={"text-white m-1"}>Управление</Button>
+                                <Button className={"text-white m-1"} onClick={toggle}>Управление</Button>
                             }
                             <Button className={"text-white m-1"} onClick={logOut}>Выйти</Button>
                         </Nav>
