@@ -1,21 +1,22 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {Button, Form, Image} from "react-bootstrap";
 import searchIcon from "../assets/search_icon.svg";
 import useQuery from "../hooks/useQuery";
 import {fetchDevices} from "../http/storeAPI";
 import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
+import useInput from "../hooks/useInput";
 
 const SearchFiled = () => {
     const context = useContext(Context)
     const query = useQuery()
-    const [search, setSearch] = useState(query.get('search') || "")
+    const input = useInput(query.get('search') || "")
     const navigator = useNavigate()
     function getDevices() {
-        fetchDevices(context.typeStore.selectedType, context.brandStore.selectedBrand,search).then(data => context.deviceStore.setDevices(data))
+        fetchDevices(context.typeStore.selectedType, context.brandStore.selectedBrand,input.value).then(data => context.deviceStore.setDevices(data))
         let url = new URL(window.location)
-        url.searchParams.set('search', search)
-        search ? navigator(url.search) : navigator('')
+        url.searchParams.set('search', input.value)
+        input.value ? navigator(url.search) : navigator('')
     }
 
     return (
@@ -24,10 +25,7 @@ const SearchFiled = () => {
                 className={"rounded-0 rounded-start border-secondary"}
                 type="text"
                 placeholder="Поиск..."
-                value={search}
-                onChange={(e)=> {
-                    setSearch(e.target.value)
-                }}
+                {...input}
                 onKeyUp={(e) => {
                     if (e.key === "Enter") {
                         getDevices()

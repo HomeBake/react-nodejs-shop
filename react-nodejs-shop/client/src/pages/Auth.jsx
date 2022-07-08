@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {Button, Card, Container, Form} from "react-bootstrap";
 import {NavLink, useNavigate} from "react-router-dom";
 import {REGISTER_ROUTE, STORE_ROUTE} from "../utils/constant";
@@ -6,14 +6,15 @@ import {useLocation} from "react-router-dom";
 import jwtDecode from "jwt-decode";
 import {register, login, check} from "../http/userAPI";
 import {Context} from "../index";
+import useInput from "../hooks/useInput";
 
 
 const Auth = () => {
     const navigate = useNavigate()
     const isRegister = useLocation().pathname === REGISTER_ROUTE
-    const [email,setEmail] = useState("")
-    const [password,setPassword] = useState("")
-    const [repeatPass, setRepeatPass] = useState("")
+    const emailInput = useInput('')
+    const passwordInput = useInput('')
+    const repeatPassInput = useInput('')
     const {userStore} = useContext(Context)
 
     function getUser(OKRes) {
@@ -32,8 +33,8 @@ const Auth = () => {
     const httpSend = async () => {
         let res
         if (isRegister) {
-            if (checkPass(password,repeatPass)) {
-                res = await register(email,password)
+            if (checkPass(passwordInput.value,repeatPassInput.value)) {
+                res = await register(emailInput.value,passwordInput.value)
                 if (res.status === 200) {
                     getUser(res)
                 }
@@ -45,7 +46,7 @@ const Auth = () => {
                 console.log('Повторите пароль')
             }
         } else {
-            res = await login(email,password)
+            res = await login(emailInput.value,passwordInput.value)
             if (res.status === 200) {
                 getUser(res)
             }
@@ -77,23 +78,20 @@ const Auth = () => {
                         type='email'
                         className={"mt-2"}
                         placeholder={"Введите Email"}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        {...emailInput}
                     />
                     <Form.Control
                         type="password"
                         className={"mt-2"}
                         placeholder={"Введите пароль"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        {...passwordInput}
                     />
                     {isRegister &&
                         <Form.Control
                             type="password"
                             className={"mt-2"}
                             placeholder={"Повторите пароль"}
-                            value={repeatPass}
-                            onChange={(e) => setRepeatPass(e.target.value)}
+                            {...repeatPassInput}
                         />
                     }
                     <Container className={"d-flex flex-row justify-content-end p-0"}>
