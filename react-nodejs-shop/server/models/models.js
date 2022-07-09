@@ -60,7 +60,7 @@ BasketDevice.belongsTo(Basket)
 Device.hasMany(BasketDevice)
 BasketDevice.belongsTo(Device)
 
-Device.hasOne(DeviceInfo)
+Device.hasMany(DeviceInfo)
 DeviceInfo.belongsTo(Device)
 
 Brand.hasMany(Device)
