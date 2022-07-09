@@ -13,6 +13,6 @@ export const login = async (email, password) => {
 }
 
 export const check = async () => {
-    const res = await $host.get(process.env.REACT_APP_API_PREFIX + process.env.REACT_APP_API_USER_URL + "check")
-    return res
+    const res = await $authHost.get(process.env.REACT_APP_API_PREFIX + process.env.REACT_APP_API_USER_URL + "check")
+    return res.data
 }
