@@ -4,7 +4,7 @@ const basketController = require('../controllers/basketController')
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware")
 
-router.post('/add', authMiddleware, basketController.add)
+router.post('/add/', authMiddleware, basketController.add)
 router.get('/', authMiddleware, basketController.get)
 router.delete('/delete', authMiddleware, basketController.delete)
 

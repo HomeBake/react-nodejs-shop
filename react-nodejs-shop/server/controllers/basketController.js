@@ -1,4 +1,4 @@
-const {Basket,BasketDevice, Device} = require('../models/models')
+const {Basket, BasketDevice, Device} = require('../models/models')
 const DeviceService = require("../services/deviceService")
 const ApiError = require('../error/ApiError')
 
@@ -7,8 +7,7 @@ class BasketController {
         const {deviceId} = req.body
         const userId = req.user.id
         let userBasket = await Basket.findOne({where: [{userId}]})
-        if (!await DeviceService.isDevice(deviceId))
-        {
+        if (!await DeviceService.isDevice(deviceId)) {
             return next(ApiError.invalidData('Такого товара не существует'))
         }
         if (!userBasket) {
@@ -19,7 +18,7 @@ class BasketController {
             return next(ApiError.invalidData('Товар уже в корзине'))
         }
         try {
-            const basketDevice = await BasketDevice.create({deviceId,basketId: userBasket.id})
+            const basketDevice = await BasketDevice.create({deviceId, basketId: userBasket.id})
             return res.json({basketDevice})
         } catch (e) {
             return next(ApiError.serverError())
@@ -34,8 +33,7 @@ class BasketController {
             const basket = await Basket.create({userId})
             userBasket = basket.id
         }
-        if (!await DeviceService.isDevice(deviceId))
-        {
+        if (!await DeviceService.isDevice(deviceId)) {
             return next(ApiError.invalidData('Такого товара не существует'))
         }
         try {
@@ -53,10 +51,15 @@ class BasketController {
         const userId = req.user.id
         try {
             const userBasket = await Basket.findAll({
-                include: {model: BasketDevice, required: false},
+                include: {model: BasketDevice, required: false, include: {model: Device}},
                 where: {userId}
             })
-            return res.json({userBasket})
+            const devices = []
+            userBasket[0].basket_devices.forEach((device) => {
+                    devices.push(device.device)
+                }
+            )
+            return res.json({devices})
         } catch (e) {
             return next(ApiError.serverError())
         }
