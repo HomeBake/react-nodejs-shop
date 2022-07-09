@@ -1,12 +1,11 @@
 import React, {useContext} from 'react';
 import {Button, Card, Container, Form} from "react-bootstrap";
-import {NavLink, useNavigate} from "react-router-dom";
+import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {REGISTER_ROUTE, STORE_ROUTE} from "../utils/constant";
-import {useLocation} from "react-router-dom";
-import jwtDecode from "jwt-decode";
-import {register, login, check} from "../http/userAPI";
+import {register, login} from "../http/userAPI";
 import {Context} from "../index";
 import useInput from "../hooks/useInput";
+import jwtDecode from "jwt-decode";
 
 
 const Auth = () => {

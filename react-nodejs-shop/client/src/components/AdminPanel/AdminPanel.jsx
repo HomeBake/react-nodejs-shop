@@ -13,7 +13,6 @@ import {BRAND_MODE, DEVICE_MODE, MENU_MODE, TYPE_MODE} from "../../utils/constan
 
 
 const AdminPanel = ({visible, onHide}) => {
-    console.log(visible)
     const [mode, setMode] = useState(MENU_MODE)
     return (
         <ModalWindow show={visible} onHide={onHide}>

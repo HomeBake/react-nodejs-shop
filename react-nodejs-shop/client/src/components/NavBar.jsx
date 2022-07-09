@@ -1,11 +1,11 @@
 import React, {useContext} from 'react';
 import {Context} from "../index";
-import {Button, Container, Nav, Navbar} from "react-bootstrap";
+import {Button, Container, Nav, Navbar, Spinner} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
-import {LOGIN_ROUTE, REGISTER_ROUTE, STORE_ROUTE} from "../utils/constant";
+import {BASKET_ROUTE, LOGIN_ROUTE, REGISTER_ROUTE, STORE_ROUTE} from "../utils/constant";
 import {observer} from "mobx-react-lite";
 
-const NavBar = observer(({toggle}) => {
+const NavBar = observer(({toggle, loading}) => {
     const {userStore} = useContext(Context)
     function logOut() {
         userStore.setIsAuth(false)
@@ -18,8 +18,14 @@ const NavBar = observer(({toggle}) => {
                 <Container>
                     <NavLink to={STORE_ROUTE} className={"text-white"}>Девайсы</NavLink>
                     {userStore.isAuth ?
-                        <Nav className="ml-auto">
-                            <Button className={"text-white m-1"}>Корзина</Button>
+                        <Nav className="ml-auto d-flex align-items-center">
+                            <NavLink to={BASKET_ROUTE}>
+                                <Button className={"text-white m-1"}>Корзина</Button>
+                            </NavLink>
+
+                            {
+                                loading && <Spinner animation="border" variant="light" />
+                            }
                             {userStore.user.role === "ADMIN" &&
                                 <Button className={"text-white m-1"} onClick={toggle}>Управление</Button>
                             }

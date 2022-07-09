@@ -4,7 +4,6 @@ import {Button, Container, Modal} from "react-bootstrap";
 
 const ModalWindow = (props) => {
 
-    console.log(props)
     return (
         <Modal
             {...props}
