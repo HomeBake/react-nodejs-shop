@@ -17,3 +17,11 @@ export const isDeviceInBasket = async (id) => {
     const res = await $authHost.post(url + id)
     return res.data
 }
+
+export const setDeviceRating = async (id,rating) => {
+    const res = await $authHost.post(process.env.REACT_APP_API_PREFIX + process.env.REACT_APP_API_RATING_URL + 'set',
+        {
+            deviceId:id,
+            rate: rating
+        })
+}

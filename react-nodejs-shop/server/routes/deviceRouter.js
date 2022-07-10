@@ -7,7 +7,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 router.post('/add',authMiddleware, roleMiddleware('ADMIN'), deviceController.add)
 router.delete('/delete',authMiddleware, roleMiddleware('ADMIN'), deviceController.delete)
 router.get('/', deviceController.get)
-router.post('/:id',authMiddleware, deviceController.isInBasket)
 router.get('/:id', deviceController.getOne)
+router.post('/:id',authMiddleware, deviceController.getUserDeviceInfo)
 
 module.exports = router

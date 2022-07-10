@@ -147,26 +147,64 @@ class DeviceController {
                 id,
                 {
                     include:
-                        [{model: DeviceInfo}]
+                        [
+                            {
+                                model: DeviceInfo
+                            }
+                        ]
                 })
-            return res.json({device})
+            const rate = await Rating.findAll({
+                where: {
+                        deviceId: id
+                    },
+                attributes: [[Sequelize.fn('AVG',Sequelize.col('rate')),'AVGrate']]
+            })
+            return res.json({device,rate})
         } catch (e) {
             return next(ApiError.serverError())
         }
     }
 
 
-    async isInBasket(req, res, next) {
-        const userId = req.user.id
-        const {id} = req.params
+    async getUserDeviceInfo(req, res, next) {
         try {
-            const userBasket = await Basket.findAll({
-                include: [{model: BasketDevice, required: false, include:[{model: Device, where:{id}}] }],
-                where: {userId}
-            })
-            return res.json({isInBasket: userBasket[0].basket_devices.length})
+            const {id} = req.params
+            const userId = req.user.id
+            if (!await DeviceService.isDevice(id)) {
+                return next(ApiError.badRequest("Такого товара нет"))
+            }
+            let userRate
+            let userBasket
+            try {
+                userRate = await Rating.findOne({
+                    where: {
+                        deviceId: id,
+                        userId: userId,
+                    },
+                    attributes: ['rate'],
+                })
+            } catch (e) {
+                return next(ApiError.invalidData('У товара нет отзывов'))
+            }
+            try {
+                userBasket = await Basket.findAll({
+                    include: [{
+                        model: BasketDevice,
+                        required: false,
+                        include: [{
+                            model: Device,
+                            where: {id },
+                        },
+                        ],
+                    }],
+                    where: {userId}
+                })
+            } catch (e) {
+                return next(ApiError.invalidData('Товар не добавляли в корзину'))
+            }
+            return res.json({userRate: userRate.rate,isInBasket: userBasket[0].basket_devices.length})
         } catch (e) {
-            return next(ApiError.serverError())
+            return next(ApiError.invalidData('У товара нет отзывов'))
         }
     }
 }
