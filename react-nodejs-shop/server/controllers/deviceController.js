@@ -1,9 +1,9 @@
 const uuid = require("uuid")
 const path = require("path")
-const {Device, DeviceInfo, Type, Brand, Basket, BasketDevice} = require("../models/models")
+const {Device, DeviceInfo, Type, Brand, Basket, BasketDevice, Rating} = require("../models/models")
 const ApiError = require("../error/ApiError")
 const DeviceService = require("../services/deviceService")
-const {Op} = require("sequelize");
+const {Op, Sequelize} = require("sequelize");
 
 
 class DeviceController {
@@ -51,42 +51,67 @@ class DeviceController {
             let devices
             if (!typeId && !brandId) {
                 devices = await Device.findAll({
-                    limit,
-                    offset,
                     where: {
                         name: {
                             [Op.iLike]: `%${search}%`
                         }
-                    }
+                    },
+                    attributes: ['id','name', 'price', 'img', 'brandId', 'typeId'],
+                    include: {
+                        model: Rating,
+                        as: 'ratings',
+                        attributes: [[Sequelize.fn('AVG',Sequelize.col('ratings.rate')),'AVGrate']],
+                        duplicating: false
+                    },
+                    group: [Sequelize.col('device.id'),Sequelize.col('ratings.deviceId')],
+                    limit: limit,
+                    offset: offset,
+                    raw: true,
                 })
             }
             if (typeId && !brandId) {
                 devices = await Device.findAll({
-                    limit,
-                    offset,
+                    attributes: ['id','name', 'price', 'img', 'brandId', 'typeId'],
                     where: {
                         typeId, name: {
                             [Op.iLike]: `%${search}%`
                         }
                     },
+                    include: {
+                        model: Rating,
+                        as: 'ratings',
+                        attributes: [[Sequelize.fn('AVG',Sequelize.col('ratings.rate')),'AVGrate']],
+                        duplicating: false
+                    },
+                    group: [Sequelize.col('device.id'),Sequelize.col('ratings.deviceId')],
+                    limit: limit,
+                    offset: offset,
+                    raw: true,
                 })
             }
             if (!typeId && brandId) {
                 devices = await Device.findAll({
-                    limit,
-                    offset,
                     where: {
                         brandId,
                         name: {
                             [Op.iLike]: `%${search}%`
                         }
                     },
+                    attributes: ['id','name', 'price', 'img', 'brandId', 'typeId'],
+                    include: {
+                        model: Rating,
+                        as: 'ratings',
+                        attributes: [[Sequelize.fn('AVG',Sequelize.col('ratings.rate')),'AVGrate']],
+                        duplicating: false
+                    },
+                    group: [Sequelize.col('device.id'),Sequelize.col('ratings.deviceId')],
+                    limit: limit,
+                    offset: offset,
+                    raw: true,
                 })
             }
             if (typeId && brandId) {
                 devices = await Device.findAll({
-                    limit,
-                    offset,
                     where: {
                         typeId,
                         brandId,
@@ -94,11 +119,21 @@ class DeviceController {
                             [Op.iLike]: `%${search}%`
                         }
                     },
+                    attributes: ['id','name', 'price', 'img', 'brandId', 'typeId'],
+                    include: {
+                        model: Rating,
+                        attributes: [[Sequelize.fn('AVG',Sequelize.col('ratings.rate')),'AVGrate']],
+                        duplicating: false
+                    },
+                    group: [Sequelize.col('device.id'),Sequelize.col('ratings.deviceId')],
+                    limit: limit,
+                    offset: offset,
+                    raw: true,
                 })
             }
             return res.json({devices})
         } catch (e) {
-            return next(ApiError.serverError())
+            console.log(e.message)
         }
     }
 
