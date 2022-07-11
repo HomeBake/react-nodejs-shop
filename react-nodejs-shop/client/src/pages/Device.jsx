@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, Container, Image, Row, Spinner, Table} from "react-bootstrap";
-import star from "../assets/star.svg"
+import {Button, Container, Spinner, Table} from "react-bootstrap";
 import {fetchDevice, isDeviceInBasket, setDeviceRating} from "../http/deviceAPI";
 import {useParams} from "react-router-dom";
 import useLoading from "../hooks/useLoading";
@@ -12,8 +11,21 @@ const Device = () => {
     const [rate, setRate] = useState(0)
     const [isBasket, setIsBasket] = useState(false)
     const [loading, endLoading] = useLoading()
-    const {id} = useParams()
     const [initUserRate, setInitUserRate] = useState(0)
+    const {id} = useParams()
+
+    const removeDeviceFromBasket = () => {
+        deleteBasketDevice(id).then( () => setIsBasket(false))
+    }
+    const addDeviceToBasket = () => {
+        addBasketDevice(id).then( () => setIsBasket(true))
+    }
+
+    const setRates = (rate) => {
+        setDeviceRating(id,rate).then( () => setInitUserRate(rate))
+    }
+
+
     useEffect(() => {
         fetchDevice(id).then((data) => {
             setDevice(data.device)
@@ -37,17 +49,6 @@ const Device = () => {
             setRate(initRate)
         })
     }, [initUserRate])
-
-    const removeDeviceFromBasket = () => {
-        deleteBasketDevice(id).then( () => setIsBasket(false))
-    }
-    const addDeviceToBasket = () => {
-        addBasketDevice(id).then( () => setIsBasket(true))
-    }
-
-    const setRates = (rate) => {
-        setDeviceRating(id,rate).then( () => setInitUserRate(rate))
-    }
 
     return (
         <Container className={"d-flex mt-5"}>

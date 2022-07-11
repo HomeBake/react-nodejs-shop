@@ -8,9 +8,10 @@ import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 import {fetchBrands, fetchDevices, fetchTypes} from "../http/storeAPI";
 import useQuery from "../hooks/useQuery";
+import OrderBar from "../components/OrderBar";
 
 const Store = observer(() => {
-    const {deviceStore,typeStore, brandStore} = useContext(Context)
+    const {deviceStore,typeStore, brandStore,filterStore} = useContext(Context)
     const [isLoading, setIsLoading] = useState(true)
     const query = useQuery()
 
@@ -33,15 +34,17 @@ const Store = observer(() => {
         fetchDevices(
             typeStore.selectedType,
             brandStore.selectedBrand,
-            query.get("search") || ''
+            query.get("search") || '',
+            filterStore.selectedFilter,
         ).then(data => deviceStore.setDevices(data)
         ).finally(() => setIsLoading(false))
-    }, [typeStore.selectedType,brandStore.selectedBrand])
+    }, [typeStore.selectedType,brandStore.selectedBrand,filterStore.selectedFilter])
 
     return (
         <Container className={"mt-4"}>
             <Row className={"mt-2"}>
                 <Col md={3}>
+                    <OrderBar/>
                     <TypeBar/>
                 </Col>
                 <Col md={9} >
@@ -56,7 +59,8 @@ const Store = observer(() => {
                                 <span className="visually-hidden">Loading...</span>
                             </Spinner>
                         </Container>
-                        : ''}
+                        : ''
+                    }
                     <DeviceList/>
                 </Col>
             </Row>

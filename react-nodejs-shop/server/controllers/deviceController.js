@@ -4,6 +4,7 @@ const {Device, DeviceInfo, Type, Brand, Basket, BasketDevice, Rating} = require(
 const ApiError = require("../error/ApiError")
 const DeviceService = require("../services/deviceService")
 const {Op, Sequelize} = require("sequelize");
+const deviceService = require("../services/deviceService");
 
 
 class DeviceController {
@@ -43,94 +44,8 @@ class DeviceController {
 
     async get(req, res, next) {
         try {
-            let {typeId, brandId, search, limit, page} = req.query
-            limit = limit || 100
-            page = page || 1
-            search = search || ''
-            let offset = page * limit - limit
-            let devices
-            if (!typeId && !brandId) {
-                devices = await Device.findAll({
-                    where: {
-                        name: {
-                            [Op.iLike]: `%${search}%`
-                        }
-                    },
-                    attributes: ['id','name', 'price', 'img', 'brandId', 'typeId'],
-                    include: {
-                        model: Rating,
-                        as: 'ratings',
-                        attributes: [[Sequelize.fn('AVG',Sequelize.col('ratings.rate')),'AVGrate']],
-                        duplicating: false
-                    },
-                    group: [Sequelize.col('device.id'),Sequelize.col('ratings.deviceId')],
-                    limit: limit,
-                    offset: offset,
-                    raw: true,
-                })
-            }
-            if (typeId && !brandId) {
-                devices = await Device.findAll({
-                    attributes: ['id','name', 'price', 'img', 'brandId', 'typeId'],
-                    where: {
-                        typeId, name: {
-                            [Op.iLike]: `%${search}%`
-                        }
-                    },
-                    include: {
-                        model: Rating,
-                        as: 'ratings',
-                        attributes: [[Sequelize.fn('AVG',Sequelize.col('ratings.rate')),'AVGrate']],
-                        duplicating: false
-                    },
-                    group: [Sequelize.col('device.id'),Sequelize.col('ratings.deviceId')],
-                    limit: limit,
-                    offset: offset,
-                    raw: true,
-                })
-            }
-            if (!typeId && brandId) {
-                devices = await Device.findAll({
-                    where: {
-                        brandId,
-                        name: {
-                            [Op.iLike]: `%${search}%`
-                        }
-                    },
-                    attributes: ['id','name', 'price', 'img', 'brandId', 'typeId'],
-                    include: {
-                        model: Rating,
-                        as: 'ratings',
-                        attributes: [[Sequelize.fn('AVG',Sequelize.col('ratings.rate')),'AVGrate']],
-                        duplicating: false
-                    },
-                    group: [Sequelize.col('device.id'),Sequelize.col('ratings.deviceId')],
-                    limit: limit,
-                    offset: offset,
-                    raw: true,
-                })
-            }
-            if (typeId && brandId) {
-                devices = await Device.findAll({
-                    where: {
-                        typeId,
-                        brandId,
-                        name: {
-                            [Op.iLike]: `%${search}%`
-                        }
-                    },
-                    attributes: ['id','name', 'price', 'img', 'brandId', 'typeId'],
-                    include: {
-                        model: Rating,
-                        attributes: [[Sequelize.fn('AVG',Sequelize.col('ratings.rate')),'AVGrate']],
-                        duplicating: false
-                    },
-                    group: [Sequelize.col('device.id'),Sequelize.col('ratings.deviceId')],
-                    limit: limit,
-                    offset: offset,
-                    raw: true,
-                })
-            }
+            let {typeId, brandId, search, limit, page, orderBy} = req.query
+            const devices = await deviceService.getDevices(typeId, brandId, search, orderBy, limit, page)
             return res.json({devices})
         } catch (e) {
             console.log(e.message)

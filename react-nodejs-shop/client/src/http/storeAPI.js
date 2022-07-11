@@ -2,11 +2,12 @@ import {$authHost, $host} from "./index";
 
 const baseURL = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PREFIX
 
-export const fetchDevices = async (typeId, brandId, search, limit, page) => {
+export const fetchDevices = async (typeId, brandId, search, orderBy, limit, page) => {
     const url = new URL(baseURL + process.env.REACT_APP_API_STORE_URL)
     typeId && url.searchParams.append("typeId",typeId)
     brandId && url.searchParams.append("brandId",brandId)
     search && url.searchParams.append("search",search)
+    orderBy && url.searchParams.append("orderBy",orderBy)
     limit && url.searchParams.append("limit",limit)
     page && url.searchParams.append("page",page)
     const {data} = await $host.get(url)

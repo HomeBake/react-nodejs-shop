@@ -6,6 +6,7 @@ import BrandStore from "../store/BrandStore";
 import {createContext, useState} from "react";
 import {Context} from "../index";
 import BasketStore from "../store/BasketStore";
+import FilterStore from "../store/FilterStore";
 
 
 
@@ -17,6 +18,7 @@ const ContextProvider = ({ children }) => {
             typeStore: new TypeStore(),
             brandStore: new BrandStore(),
             basketStore: new BasketStore(),
+            filterStore: new FilterStore()
         }}>
             {children}
         </Context.Provider>
