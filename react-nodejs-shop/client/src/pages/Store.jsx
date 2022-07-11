@@ -47,6 +47,27 @@ const Store = observer(() => {
         }
     }, [])
 
+    useEffect( () => {
+        pageStore.setPage(1)
+        fetchDevices(
+            typeStore.selectedType,
+            brandStore.selectedBrand,
+            query.get("search") || '',
+            filterStore.selectedFilter,
+            pageStore.limit,
+            pageStore.page,
+        ).then(data => {
+                deviceStore.setDevices(data.rows)
+                pageStore.setItemTotal(data.count.length)
+            }
+        ).finally(() => setIsLoading(false))
+        if (pageStore.paginationType) {
+            document.addEventListener('scroll', scrollHandler)
+            return function () {
+                document.removeEventListener('scroll', scrollHandler)
+            }
+        }
+    }, [pageStore.paginationType])
 
     useEffect( (e) => {
         pageStore.setPage(1)
@@ -66,7 +87,6 @@ const Store = observer(() => {
         typeStore.selectedType,
         brandStore.selectedBrand,
         filterStore.selectedFilter,
-        pageStore.paginationType
     ])
     useEffect( () => {
         (pageStore.page !== 1 || !pageStore.paginationType) &&
