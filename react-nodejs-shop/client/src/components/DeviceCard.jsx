@@ -12,7 +12,7 @@ const DeviceCard = (props) => {
                 <Image
                     src={process.env.REACT_APP_API_URL + props.device.img}
                     className={"img-thumbnail w-100"} alt={"image"}
-                    style={{ minHeight: '210px'}}
+                    style={{ minHeight: '180px'}}
                 />
                 <div>{props.device.name}</div>
                 <div className={"align-self-end text-black-50"}>{props.device.price} рублей</div>

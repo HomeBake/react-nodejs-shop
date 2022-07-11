@@ -10,10 +10,6 @@ export const authRoutes = [
         path: ADMIN_ROUTE,
         element: <Admin/>
     },
-    {
-        path: BASKET_ROUTE,
-        element: <Basket/>
-    },
 ]
 
 export const publicRoutes = [
@@ -32,5 +28,9 @@ export const publicRoutes = [
     {
         path: STORE_ROUTE,
         element: <Store/>
-    }
+    },
+    {
+        path: BASKET_ROUTE,
+        element: <Basket/>
+    },
 ]
