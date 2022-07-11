@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Button, Card, Container, Form} from "react-bootstrap";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
-import {REGISTER_ROUTE, STORE_ROUTE} from "../utils/constant";
+import {LOGIN_ROUTE, REGISTER_ROUTE, STORE_ROUTE} from "../utils/constant";
 import {register, login} from "../http/userAPI";
 import {Context} from "../index";
 import useInput from "../hooks/useInput";
@@ -94,9 +94,14 @@ const Auth = () => {
                         />
                     }
                     <Container className={"d-flex flex-row justify-content-end p-0"}>
-                        {!isRegister &&
+                        {!isRegister
+                            ?
                             <div>
-                                Еще не зарегестрированы? <NavLink to={REGISTER_ROUTE}> Зарегистрироваться </NavLink>
+                                Еще не зарегестрированы? <NavLink to={REGISTER_ROUTE}><u> Зарегистрироваться </u></NavLink>
+                            </div>
+                            :
+                            <div className={"w-100"}>
+                                Уже зарегестрированы? <NavLink to={LOGIN_ROUTE}><u> Войти! </u></NavLink>
                             </div>
                         }
 
@@ -109,7 +114,7 @@ const Auth = () => {
                             onClick={httpSend}
                         >
                             {isRegister ?
-                                "Зарегистрироваться"
+                                "Далее"
                                 :
                                 "Войти"
                             }

@@ -1,28 +1,46 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Button, Container, Spinner, Table} from "react-bootstrap";
 import {fetchDevice, isDeviceInBasket, setDeviceRating} from "../http/deviceAPI";
-import {useParams} from "react-router-dom";
+import {NavLink, useParams} from "react-router-dom";
 import useLoading from "../hooks/useLoading";
 import {addBasketDevice, deleteBasketDevice} from "../http/basketAPI";
 import RatingStars from "../components/RatingStars";
+import {Context} from "../index";
+import ModalWindow from "../components/ModalWindow";
+import {LOGIN_ROUTE} from "../utils/constant";
 
 const Device = () => {
     const [device,setDevice] = useState({})
     const [rate, setRate] = useState(0)
     const [isBasket, setIsBasket] = useState(false)
-    const [loading, endLoading] = useLoading()
     const [initUserRate, setInitUserRate] = useState(0)
+    const [loading, endLoading] = useLoading()
+    const {userStore} = useContext(Context)
     const {id} = useParams()
+    const [authNotif,setAuthNotif] = useState(false)
 
     const removeDeviceFromBasket = () => {
-        deleteBasketDevice(id).then( () => setIsBasket(false))
+        userStore.isAuth
+            ?
+            deleteBasketDevice(id).then( () => setIsBasket(false))
+            :
+            setAuthNotif(true)
     }
+
     const addDeviceToBasket = () => {
-        addBasketDevice(id).then( () => setIsBasket(true))
+        userStore.isAuth
+            ?
+            addBasketDevice(id).then( () => setIsBasket(true))
+            :
+            setAuthNotif(true)
     }
 
     const setRates = (rate) => {
-        setDeviceRating(id,rate).then( () => setInitUserRate(rate))
+        userStore.isAuth
+            ?
+            setDeviceRating(id,rate).then( () => setInitUserRate(rate))
+            :
+            setAuthNotif(true)
     }
 
 
@@ -34,12 +52,13 @@ const Device = () => {
                 setRate(initRate)
             }
         })
-        isDeviceInBasket(id).then((data) => {
+        userStore.isAuth && isDeviceInBasket(id).then((data) => {
             setIsBasket(data.isInBasket)
             if(data.userRate) {
                 setInitUserRate(data.userRate)
             }
-        }).finally(endLoading)
+        })
+        endLoading()
 
     }, [])
     useEffect(()=> {
@@ -70,6 +89,9 @@ const Device = () => {
                         </Container>
                     </div>
                 </div>
+                <ModalWindow show={authNotif} onHide={()=> setAuthNotif(false)}>
+                    Для данного действия нужно <NavLink to={LOGIN_ROUTE}> <u>авторизоваться</u> </NavLink>
+                </ModalWindow>
                 {device.device_infos ?
                     <Table striped bordered hover>
                         <tbody>
