@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Col, Container, Row, Spinner} from "react-bootstrap";
+import {Col, Container, Pagination, Row, Spinner} from "react-bootstrap";
 import TypeBar from "../components/TypeBar";
 import BrandBar from "../components/BrandBar";
 import DeviceList from "../components/DeviceList";
@@ -9,9 +9,10 @@ import {Context} from "../index";
 import {fetchBrands, fetchDevices, fetchTypes} from "../http/storeAPI";
 import useQuery from "../hooks/useQuery";
 import OrderBar from "../components/OrderBar";
+import PaginationComp from "../components/PaginationComp";
 
 const Store = observer(() => {
-    const {deviceStore,typeStore, brandStore,filterStore} = useContext(Context)
+    const {deviceStore,typeStore, brandStore,filterStore,pageStore} = useContext(Context)
     const [isLoading, setIsLoading] = useState(true)
     const query = useQuery()
 
@@ -22,23 +23,71 @@ const Store = observer(() => {
         return [typeId, brandId, search]
     }
 
-    useEffect( (e) => {
+    const scrollHandler = (e) => {
+        const pageTotal = Math.ceil(pageStore.itemTotal / pageStore.limit)
+        if (pageStore.paginationType  && pageStore.page < pageTotal &&  (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100)) {
+            pageStore.setPage(pageStore.page + 1)
+        }
+    }
+
+    useEffect( () => {
+        pageStore.setPage(1)
         fetchDevices(...parseUrl()
-        ).then(data => deviceStore.setDevices(data)
+        ).then(data => {
+            pageStore.setItemTotal(data.count.length)
+            }
         ).finally(() => setIsLoading(false))
         fetchTypes().then(data => typeStore.setTypes(data))
         fetchBrands().then(data => brandStore.setBrands(data))
+        if (pageStore.paginationType) {
+            document.addEventListener('scroll', scrollHandler)
+            return function () {
+                document.removeEventListener('scroll', scrollHandler)
+            }
+        }
     }, [])
 
+
     useEffect( (e) => {
+        pageStore.setPage(1)
         fetchDevices(
             typeStore.selectedType,
             brandStore.selectedBrand,
             query.get("search") || '',
             filterStore.selectedFilter,
-        ).then(data => deviceStore.setDevices(data)
+            pageStore.limit,
+            pageStore.page,
+        ).then(data => {
+                deviceStore.setDevices(data.rows)
+                pageStore.setItemTotal(data.count.length)
+            }
         ).finally(() => setIsLoading(false))
-    }, [typeStore.selectedType,brandStore.selectedBrand,filterStore.selectedFilter])
+    }, [
+        typeStore.selectedType,
+        brandStore.selectedBrand,
+        filterStore.selectedFilter,
+        pageStore.paginationType
+    ])
+    useEffect( () => {
+        (pageStore.page !== 1 || !pageStore.paginationType) &&
+        fetchDevices(
+            typeStore.selectedType,
+            brandStore.selectedBrand,
+            query.get("search") || '',
+            filterStore.selectedFilter,
+            pageStore.limit,
+            pageStore.page,
+        ).then(data => {
+            pageStore.paginationType
+                ?
+                deviceStore.setDevices([...deviceStore.devices,...data.rows])
+                :
+                deviceStore.setDevices(data.rows)
+        }).finally(() => setIsLoading(false))
+    }, [
+        pageStore.page
+    ])
+
 
     return (
         <Container className={"mt-4"}>
@@ -62,6 +111,7 @@ const Store = observer(() => {
                         : ''
                     }
                     <DeviceList/>
+                    {!pageStore.paginationType && <PaginationComp/>}
                 </Col>
             </Row>
         </Container>

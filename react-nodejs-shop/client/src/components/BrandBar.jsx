@@ -9,7 +9,7 @@ const BrandBar = observer(() => {
         <Container className={"d-flex flex-wrap p-0"}>
                 {brandStore.brands.map((brand)=>
                     <Button
-                        className={"me-2"}
+                        className={"m-1"}
                         style={{cursor: "pointer"}}
                         key={brand.id}
                         onClick={() => brandStore.setSelectedBrand(brand.id)}

@@ -9,7 +9,11 @@ const DeviceCard = (props) => {
     return (
         <NavLink to={DEVICE_ROUTE + '/' + props.device.id} className={"w-25 m-4"}>
             <Card className={"d-flex flex-column align-items-center  p-2"} style={{cursor: "pointer"}} >
-                <Image src={process.env.REACT_APP_API_URL + props.device.img} className={"img-thumbnail w-100"} alt={"image"}></Image>
+                <Image
+                    src={process.env.REACT_APP_API_URL + props.device.img}
+                    className={"img-thumbnail w-100"} alt={"image"}
+                    style={{ minHeight: '210px'}}
+                />
                 <div>{props.device.name}</div>
                 <div className={"align-self-end text-black-50"}>{props.device.price} рублей</div>
                 {rate ?

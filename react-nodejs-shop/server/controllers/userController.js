@@ -62,6 +62,33 @@ class UserController {
             return next(ApiError.serverError())
         }
     }
+
+    async changeRole(req, res, next) {
+        try {
+            const userId = req.user.id
+            const currentRole = req.user.role
+            let result
+            let token
+            if (currentRole === 'USER') {
+                result = await User.update(
+                    {role: 'ADMIN'},
+                    {where: {id: userId}}
+                )
+                token = generateJWT(req.user.id, req.user.email, "ADMIN")
+            }
+            else {
+                result = await User.update(
+                    {role: 'USER'},
+                    {where: {id: userId}}
+                )
+                token = generateJWT(req.user.id, req.user.email, "USER")
+            }
+
+            return res.json({result,token})
+        } catch (e) {
+            return next(ApiError.serverError())
+        }
+    }
 }
 
 module.exports = new UserController()

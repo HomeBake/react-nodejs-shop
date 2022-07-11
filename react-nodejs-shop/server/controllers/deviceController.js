@@ -18,9 +18,13 @@ class DeviceController {
                 !await DeviceService.isBrand(brandId)) {
                 return next(ApiError.invalidData("Тип или бренд несуществует"))
             }
-            const {img} = req.files
             const fileName = uuid.v4() + '.jpg'
-            await img.mv(path.resolve(__dirname, '..', 'static', fileName))
+            try {
+                const {img} = req.files
+                await img.mv(path.resolve(__dirname, '..', 'static', fileName))
+            } catch (e) {
+
+            }
             const device = await Device.create({name, price, brandId, typeId, img: fileName})
             if (info) {
                 info = JSON.parse(info)

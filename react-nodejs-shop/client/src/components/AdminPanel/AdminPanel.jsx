@@ -6,6 +6,7 @@ import AdminPanelType from "./AdminPanelType";
 import AdminPanelBrand from "./AdminPanelBrand";
 import AdminPanelDevice from "./AdminPanelDevice";
 import {BRAND_MODE, DEVICE_MODE, MENU_MODE, TYPE_MODE} from "../../utils/constant";
+import Notification from "../Notification";
 
 
 
@@ -14,6 +15,7 @@ import {BRAND_MODE, DEVICE_MODE, MENU_MODE, TYPE_MODE} from "../../utils/constan
 
 const AdminPanel = ({visible, onHide}) => {
     const [mode, setMode] = useState(MENU_MODE)
+    const [show, setShow] = useState(false);
     return (
         <ModalWindow show={visible} onHide={onHide}>
             {mode === MENU_MODE && <AdminPanelMenu setMode={setMode}/>}

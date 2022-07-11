@@ -7,6 +7,7 @@ import {addBrand, fetchBrands, fetchDevices, fetchTypes} from "../../http/storeA
 import AdminPanelDeviceInfo from "./AdminPanelDeviceInfo";
 import {useEffect} from "react";
 import {createDevice} from "../../http/deviceAPI";
+import Notification from "../Notification";
 
 const AdminPanelDevice = ({setMode}) => {
     const {deviceStore,brandStore,typeStore} = useContext(Context)
@@ -14,8 +15,11 @@ const AdminPanelDevice = ({setMode}) => {
     const [devicePrice, setDevicePrice] = useState('')
     const [brandId, setBrandId] = useState('')
     const [typeId, setTypeId] = useState('')
-    const [file,setFile] = useState('')
+    const [file, setFile] = useState('')
     const [info, setInfo] = useState([{title: '', description: '', number: Date.now()}])
+    const [notifTitle, setNotifTitle] = useState('')
+    const [notifText, setNotifText] = useState('')
+    const [show, setShow] = useState(false)
 
     useEffect( (e) => {
         fetchTypes().then(data => typeStore.setTypes(data))
@@ -23,7 +27,7 @@ const AdminPanelDevice = ({setMode}) => {
     }, [])
 
     async function addDevice() {
-        if (deviceTitle && devicePrice && file && brandId && typeId) {
+        if (deviceTitle && devicePrice && brandId && typeId) {
             const formData = new FormData()
             formData.append('name', deviceTitle)
             formData.append('price', `${devicePrice}`)
@@ -31,7 +35,19 @@ const AdminPanelDevice = ({setMode}) => {
             formData.append('typeId', typeId)
             formData.append('img', file)
             formData.append('info', JSON.stringify(info))
-            await createDevice(formData).then(res => console.log(res)).catch(res => console.log(res))
+            await createDevice(formData).then(res => {
+                if (res.status === 200) {
+                    setNotifText('Устройство создано!')
+                    setNotifTitle('Успешно')
+                    setShow(true)
+                    }
+                else {
+                    setNotifText(res.data.message)
+                    setNotifTitle('Ошибка')
+                    setShow(true)
+                }
+
+            } ).catch()
         }
     }
 
@@ -39,8 +55,17 @@ const AdminPanelDevice = ({setMode}) => {
         setFile(e.target.files[0])
     }
 
+    function fill() {
+        setDeviceTitle('Iphone')
+        setDevicePrice('9999')
+        setBrandId('1')
+        setTypeId('1')
+        setInfo([{title: 'Крутость', description: 'Крутой', number: Date.now()}])
+    }
+
     return (
-        <Container>
+        <Container className={'d-flex flex-column'}>
+            <Notification title={notifTitle} text={notifText} show={show} setShow={setShow}/>
             <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">
                     Создание товара
@@ -75,6 +100,7 @@ const AdminPanelDevice = ({setMode}) => {
                         <AdminPanelDeviceInfo info={info} setInfo={setInfo}/>
                     </Form>
                     <Button onClick={addDevice}>Создать</Button>
+                    <Button variant={"secondary"} onClick={fill}>Заполнить тестовыми данными</Button>
                 </Container>
             </Modal.Body>
             <Modal.Footer>

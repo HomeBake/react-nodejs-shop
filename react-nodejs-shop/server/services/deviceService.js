@@ -27,14 +27,14 @@ class DeviceService {
 
     static async getDevices(typeId, brandId, search, orderBy, limit, page) {
         orderBy = ORDER[orderBy] || ORDER['DEFAULT']
-        limit = limit || 100
+        limit = limit || 9
         page = page || 1
         search = search || ''
         let offset = page * limit - limit
         let devices
         
         if (!typeId && !brandId) {
-            devices = await Device.findAll({
+            devices = await Device.findAndCountAll({
                 where: {
                     name: {
                         [Op.iLike]: `%${search}%`
@@ -55,7 +55,7 @@ class DeviceService {
             })
         }
         if (typeId && !brandId) {
-            devices = await Device.findAll({
+            devices = await Device.findAndCountAll({
                 attributes: ['id', 'name', 'price', 'img', 'brandId', 'typeId'],
                 where: {
                     typeId, name: {
@@ -76,7 +76,7 @@ class DeviceService {
             })
         }
         if (!typeId && brandId) {
-            devices = await Device.findAll({
+            devices = await Device.findAndCountAll({
                 where: {
                     brandId,
                     name: {
@@ -98,7 +98,7 @@ class DeviceService {
             })
         }
         if (typeId && brandId) {
-            devices = await Device.findAll({
+            devices = await Device.findAndCountAll({
                 where: {
                     typeId,
                     brandId,
