@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Container, Spinner, Table} from "react-bootstrap";
+import {Button, Container, Image, Spinner, Table} from "react-bootstrap";
 import {fetchDevice, isDeviceInBasket, setDeviceRating} from "../http/deviceAPI";
 import {NavLink, useParams} from "react-router-dom";
 import useLoading from "../hooks/useLoading";
@@ -71,6 +71,7 @@ const Device = () => {
 
     return (
         <Container className={"d-flex mt-5"}>
+            <Image src={process.env.REACT_APP_API_URL + device.img} className={'w-25 me-5'}/>
             <div className={"d-flex flex-column w-100 "}>
                 <div className={"d-flex flex-row w-100 justify-content-between"}>
                     <h1> {device.name}</h1>
